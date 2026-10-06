@@ -7,23 +7,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Visibility {
+  PRIVATE
+  PUBLIC
+}
+
+model Collection {
+  id         Int        @id @default(autoincrement())
+  name       String
+  visibility Visibility @default(PRIVATE)
+  userId     Int
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  links      Link[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  links Link[]
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  links     Link[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
+  email       String       @unique
+  password    String
+  links       Link[]
+  collections Collection[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Link {
-  id          Int      @id @default(autoincrement())
-  title       String
-  url         String
-  description String?
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           Int         @id @default(autoincrement())
+  title        String
+  url          String
+  description  String?
+  userId       Int
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collectionId Int?
+  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  tags         Tag[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }

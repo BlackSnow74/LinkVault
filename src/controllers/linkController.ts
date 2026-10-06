@@ -4,7 +4,10 @@ import { AppError } from "../utils/AppError";
 import {
   CreateLinkInput,
   UpdateLinkInput,
+  LinkQuery,
+  SetTagsInput,
 } from "../schemas/link.schema";
+import { linkQuerySchema, setTagsSchema } from "../schemas/link.schema";
 
 const getId = (req: Request): number => {
   const id = Number(req.params.id);
@@ -21,8 +24,24 @@ const getUserId = (req: Request): number => {
 
 export const linkController = {
   async list(req: Request, res: Response) {
-    const links = await linkService.getAll(getUserId(req));
-    res.status(200).json(links);
+    const parsed = linkQuerySchema.safeParse(req.query);
+    if (!parsed.success) {
+      throw new AppError(400, "Invalid query parameters");
+    }
+    res.status(200).json(await linkService.getAll(getUserId(req), parsed.data));
+  },
+
+  async setTags(req: Request, res: Response) {
+    const parsed = setTagsSchema.safeParse(req.body);
+    if (!parsed.success) {
+      throw new AppError(400, "Body must be { tagNames: string[] }");
+    }
+    const link = await linkService.setTags(
+      getId(req),
+      getUserId(req),
+      (parsed.data as SetTagsInput).tagNames,
+    );
+    res.status(200).json(link);
   },
 
   async getOne(req: Request, res: Response) {

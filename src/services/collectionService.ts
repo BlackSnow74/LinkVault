@@ -1,0 +1,45 @@
+import { prisma } from "../lib/prisma";
+import { AppError } from "../utils/AppError";
+import {
+  CreateCollectionInput,
+  UpdateCollectionInput,
+} from "../schemas/collection.schema";
+
+export const collectionService = {
+  async getAll(userId: number) {
+    return prisma.collection.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: { _count: { select: { links: true } } },
+    });
+  },
+
+  async getById(id: number, userId: number) {
+    return prisma.collection.findFirst({
+      where: { id, userId },
+      include: {
+        links: {
+          include: { tags: true, collection: { select: { id: true, name: true } } },
+          orderBy: { createdAt: "desc" },
+        },
+      },
+    });
+  },
+
+  async create(data: CreateCollectionInput, userId: number) {
+    return prisma.collection.create({ data: { ...data, userId } });
+  },
+
+  async update(id: number, data: UpdateCollectionInput, userId: number) {
+    const owned = await prisma.collection.findFirst({ where: { id, userId } });
+    if (!owned) throw new AppError(404, "Collection not found");
+    return prisma.collection.update({ where: { id }, data });
+  },
+
+  async remove(id: number, userId: number) {
+    const owned = await prisma.collection.findFirst({ where: { id, userId } });
+    if (!owned) throw new AppError(404, "Collection not found");
+    // links.collectionId is SetNull on delete, so links survive
+    return prisma.collection.delete({ where: { id } });
+  },
+};
