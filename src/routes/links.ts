@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { linkController } from "../controllers/linkController";
 import { validate } from "../middleware/validate";
+import { requireAuth } from "../middleware/auth";
 import {
   createLinkSchema,
   updateLinkSchema,
 } from "../schemas/link.schema";
 
 const router = Router();
+
+router.use(requireAuth);
 
 router.get("/", linkController.list);
 router.get("/:id", linkController.getOne);
