@@ -10,6 +10,25 @@ declare module "express-serve-static-core" {
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
+export const optionalAuth = (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+): void => {
+  const header = req.headers.authorization;
+  if (!header || !header.startsWith("Bearer ")) {
+    next();
+    return;
+  }
+  try {
+    const payload = jwt.verify(header.slice(7), JWT_SECRET) as { userId: number };
+    req.userId = payload.userId;
+  } catch {
+    // invalid token on an optional route just means "treat as anonymous"
+  }
+  next();
+};
+
 export const requireAuth = (
   req: Request,
   _res: Response,

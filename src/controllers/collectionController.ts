@@ -25,7 +25,7 @@ export const collectionController = {
   },
 
   async getOne(req: Request, res: Response) {
-    const c = await collectionService.getById(getId(req), getUserId(req));
+    const c = await collectionService.getById(getId(req), req.userId);
     if (!c) throw new AppError(404, "Collection not found");
     res.status(200).json(c);
   },

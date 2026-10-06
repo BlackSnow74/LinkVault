@@ -14,9 +14,9 @@ export const collectionService = {
     });
   },
 
-  async getById(id: number, userId: number) {
-    return prisma.collection.findFirst({
-      where: { id, userId },
+  async getById(id: number, userId?: number) {
+    const collection = await prisma.collection.findUnique({
+      where: { id },
       include: {
         links: {
           include: { tags: true, collection: { select: { id: true, name: true } } },
@@ -24,6 +24,12 @@ export const collectionService = {
         },
       },
     });
+    if (!collection) return null;
+    // owner sees everything; everyone else only sees PUBLIC
+    if (collection.userId !== userId && collection.visibility !== "PUBLIC") {
+      return null; // 404, same as not existing — don't leak its existence
+    }
+    return collection;
   },
 
   async create(data: CreateCollectionInput, userId: number) {
