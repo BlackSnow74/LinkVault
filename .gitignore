@@ -1,7 +1,6 @@
 node_modules
 .env
 dist
-
-/src/generated/prisma
+docs
 
 /src/generated/prisma

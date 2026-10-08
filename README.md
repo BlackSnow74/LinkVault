@@ -58,7 +58,22 @@ Server runs on `http://localhost:3000` by default (`PORT` env var to override).
 { "error": "message" }
 ```
 
-Status codes: `400` invalid input · `404` not found · `500` server error.
+Status codes: `400` invalid input · `401` not authenticated · `404` not found · `409` conflict · `429` rate limited · `500` server error.
+
+## API surface (Phases 1–4)
+
+| Method | Path | Auth |
+|---|---|---|
+| POST | `/api/auth/register` | no |
+| POST | `/api/auth/login` | no |
+| GET | `/api/auth/me` | yes |
+| GET/POST | `/api/links` | yes |
+| GET/PATCH/DELETE | `/api/links/:id` | yes |
+| PUT | `/api/links/:id/tags` | yes |
+| GET | `/api/links?search=&tag=&collection=&page=&limit=` | yes |
+| GET/POST | `/api/collections` | yes |
+| GET | `/api/collections/:id` | public if `PUBLIC` |
+| PATCH/DELETE | `/api/collections/:id` | owner only |
 
 ## Project structure
 
