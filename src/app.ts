@@ -6,6 +6,8 @@ import linksRouter from "./routes/links";
 import authRouter from "./routes/auth";
 import collectionsRouter from "./routes/collections";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
+import swaggerUi from "swagger-ui-express";
+import { openApiSpec } from "./docs/openapi";
 
 const app = express();
 
@@ -43,6 +45,12 @@ app.use("/api/auth/register", authLimiter);
 
 app.get("/health", (_req, res) => {
   res.status(200).json({ status: "OK", message: "LinkVault API is running!" });
+});
+
+// Interactive API docs
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
+app.get("/api/openapi.json", (_req, res) => {
+  res.status(200).json(openApiSpec);
 });
 
 app.use("/api/auth", authRouter);

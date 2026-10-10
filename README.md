@@ -75,6 +75,34 @@ Status codes: `400` invalid input · `401` not authenticated · `404` not found 
 | GET | `/api/collections/:id` | public if `PUBLIC` |
 | PATCH/DELETE | `/api/collections/:id` | owner only |
 
+## API docs
+
+Interactive Swagger UI at `/api/docs`, raw OpenAPI spec at `/api/openapi.json`.
+
+## Testing
+
+| Command | Purpose |
+|---|---|
+| `npm test` | Run the full suite once |
+| `npm run test:watch` | Re-run on change |
+| `npm run test:coverage` | With coverage report |
+
+Tests run against a **separate** database. Copy `.env.test.example` to `.env.test` and set `TEST_DATABASE_URL`, then create the schema once:
+
+```bash
+npx prisma db push --skip-generate   # against the test database
+```
+
+The suite refuses to run unless `TEST_DATABASE_URL` contains "test", so it can never touch your development data.
+
+## Deployment (Render)
+
+`render.yaml` declares a Node web service plus a managed PostgreSQL database. Pushing it to GitHub and creating a Blueprint on Render provisions both. Secrets come from Render's environment (`JWT_SECRET` is generated), never from a committed file.
+
+Build runs `npm ci && npm run build && npx prisma migrate deploy`, so migrations apply on every deploy. Health checks hit `/health`.
+
+Set `CORS_ORIGIN` to your frontend's origin in production rather than leaving it open.
+
 ## Project structure
 
 ```

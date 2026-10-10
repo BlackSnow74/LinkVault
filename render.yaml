@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: linkvault-api
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build && npx prisma migrate deploy
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: linkvault-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false
+
+databases:
+  - name: linkvault-db
+    databaseName: linkvault
+    user: linkvault
+    plan: free
