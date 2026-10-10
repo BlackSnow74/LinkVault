@@ -1,7 +1,9 @@
 node_modules
 .env
 dist
-docs
+
+# Local notes only. Anchored to the root so src/docs/ stays tracked.
+/docs
 
 /src/generated/prisma
 
