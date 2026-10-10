@@ -2,7 +2,16 @@
 
 Personal link/bookmark management REST API.
 
-**Stack:** Node.js · TypeScript (strict) · Express 5 · PostgreSQL · Prisma 6 · JWT (Phase 2) · bcrypt (Phase 2) · Zod · tsx
+**Stack:** Node.js · TypeScript (strict) · Express 5 · PostgreSQL · Prisma 6 · JWT · bcrypt · Zod · tsx
+
+## Links
+
+| | |
+|---|---|
+| Live API | https://linkvault-api-xy7m.onrender.com |
+| API docs (Swagger UI) | https://linkvault-api-xy7m.onrender.com/api/docs |
+| Health check | https://linkvault-api-xy7m.onrender.com/health |
+| Source code | https://github.com/BlackSnow74/LinkVault |
 
 ## Quickstart
 
